@@ -173,18 +173,13 @@ types:
         type: u2
       - id: target
         type: domain_name
-  txt:
+  txt_body:
     seq:
       - id: length
         type: u1
       - id: text
         type: str
         size: length
-  txt_body:
-    seq:
-      - id: data
-        type: txt
-        repeat: eos
   authority_info:
     seq:
       - id: primary_ns
