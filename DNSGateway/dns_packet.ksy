@@ -88,6 +88,7 @@ types:
             "type_type::cname": domain_name
             "type_type::soa": authority_info
             "type_type::mx": mx_info
+            "type_type::ns": domain_name
             "type_type::srv": service
             "type_type::txt": txt_body
   domain_name:
