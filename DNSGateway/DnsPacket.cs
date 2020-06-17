@@ -237,13 +237,18 @@ namespace Kaitai
             {
                 _name = new List<Label>();
                 {
-                    var i = 0;
+                    //var i = 0;
                     Label M_;
                     do {
                         M_ = new Label(m_io, this, m_root);
+                        if (M_.Length == 0)
+                        {
+                            break;
+                        }
+
                         _name.Add(M_);
-                        i++;
-                    } while (!( ((M_.Length == 0) || (M_.Length >= 192)) ));
+                        //i++;
+                    } while (M_.Length < 192);
                 }
             }
             private List<Label> _name;

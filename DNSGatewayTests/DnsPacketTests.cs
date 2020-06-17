@@ -85,6 +85,133 @@ namespace Kaitai.Tests
             return;
         }
 
+        [TestMethod()]
+        public void ParseInvalidNameLabel()
+        {
+            // Modify name segment length to exceed packet data end
+            // offset 12, 0x05, -> length of 'china'
+            // modify as 24, so that offset + length >= data size, i.e. 36
+
+            byte[] byteData = udpPackets[0].PayloadData;
+            Assert.IsTrue(0x05 == byteData[12]);
+
+            byteData[12] = 24;
+            try
+            {
+                DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(byteData));
+                Assert.Fail("Invalid packet data passed");
+            }
+            catch(System.IO.EndOfStreamException)
+            {
+                Assert.IsTrue(true);
+            }
+
+            return;
+        }
+
+        [TestMethod()]
+        public void ParseInvalidRefNameLength()
+        {
+            // Modify name segment length to exceed packet data end
+            // offset 36, 0xC0, -> pointer, offset 0 << 8 + data[37]
+            // offset 37, 0x0C, -> begining of name in header, 'china'
+            // modify offset as 24, so that offset + length >= data size, i.e. 36
+
+            byte[] byteData = udpPackets[2].PayloadData;
+            Assert.IsTrue(0xC0 == byteData[36]);
+            Assert.IsTrue(0x0C == byteData[37]);
+
+            byteData[36] = 0xC1;
+            byteData[37] = (byte)byteData.Length;
+            //try
+            {
+                DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(byteData));
+
+                DnsPacket.Query q = dnsPacket.Queries[0];
+                VerifyName(q.Name.Name, StrQueryDomainName);
+
+                DnsPacket.Answer a = dnsPacket.Answers[0];
+                Assert.IsTrue(DnsPacket.ClassType.InClass == a.AnswerClass);
+                Assert.IsTrue(600 == a.Ttl);
+                Assert.IsTrue(DnsPacket.TypeType.A == a.Type);
+                //VerifyRefName(a.Name.Name);
+                {
+                    Assert.AreEqual((int)1, a.Name.Name.Count);
+                    Label l = a.Name.Name[0];
+                    Assert.IsTrue(l.IsPointer);
+                    Assert.IsTrue(0xC1 == l.Length);
+                    Assert.IsTrue(byteData.Length == l.Pointer.Value);
+
+                    PointerStruct ps = l.Pointer;
+                    try
+                    {
+                        VerifyName(ps.Contents.Name, StrQueryDomainName);
+                    }
+                    catch(System.IO.EndOfStreamException)
+                    {
+                        Assert.IsTrue(true);
+                    }
+                }
+            }
+            //catch (System.IO.EndOfStreamException)
+            {
+                Assert.IsTrue(true);
+            }
+
+            return;
+        }
+
+        [TestMethod()]
+        public void ParseLoopRefNameOffset()
+        {
+            // Modify name segment length to exceed packet data end
+            // offset 36, 0xC0, -> pointer, offset 0 << 8 + data[37]
+            // offset 37, 0x0C, -> begining of name in header, 'china'
+            // modify offset as 24, so that offset + length >= data size, i.e. 36
+
+            byte[] byteData = udpPackets[2].PayloadData;
+            Assert.IsTrue(0xC0 == byteData[36]);
+            Assert.IsTrue(0x0C == byteData[37]);
+
+            byteData[36] = 0xC0;
+            byteData[37] = 36;
+            //try
+            {
+                DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(byteData));
+
+                DnsPacket.Query q = dnsPacket.Queries[0];
+                VerifyName(q.Name.Name, StrQueryDomainName);
+
+                DnsPacket.Answer a = dnsPacket.Answers[0];
+                Assert.IsTrue(DnsPacket.ClassType.InClass == a.AnswerClass);
+                Assert.IsTrue(600 == a.Ttl);
+                Assert.IsTrue(DnsPacket.TypeType.A == a.Type);
+                //VerifyRefName(a.Name.Name);
+                {
+                    Assert.AreEqual((int)1, a.Name.Name.Count);
+                    Label l = a.Name.Name[0];
+                    Assert.IsTrue(l.IsPointer);
+                    Assert.IsTrue(0xC0 == l.Length);
+                    Assert.IsTrue(36 == l.Pointer.Value);
+
+                    PointerStruct ps = l.Pointer;
+                    try
+                    {
+                        VerifyName(ps.Contents.Name, StrQueryDomainName);
+                    }
+                    catch (System.IO.EndOfStreamException)
+                    {
+                        Assert.IsTrue(true);
+                    }
+                }
+            }
+            //catch (System.IO.EndOfStreamException)
+            {
+                Assert.IsTrue(true);
+            }
+
+            return;
+        }
 
         private static void VerifyAnswer(DnsPacket dnsPacket, string StrAddressExpected, int ttl)
         {
@@ -129,7 +256,8 @@ namespace Kaitai.Tests
         {
             string[] strsName = strExpectedName.Split('.');
 
-            Assert.IsTrue(strsName.Length + 1 == name.Count);
+            //Assert.IsTrue(strsName.Length + 1 == name.Count);
+            Assert.AreEqual(strsName.Length, name.Count);
             for (byte n = 0; n < strsName.Length; n++)
             {
                 Assert.AreEqual(strsName[n], name[n].Name);
