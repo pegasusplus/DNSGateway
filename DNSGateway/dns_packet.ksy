@@ -14,43 +14,44 @@ seq:
     type: u2
   - id: flags
     type: packet_flags
-  - id: qdcount
-    doc: "How many questions are there"
+  - id: body
     if: flags.is_opcode_valid
-    type: u2
-  - id: ancount
-    doc: "Number of resource records answering the question"
-    if: flags.is_opcode_valid
-    type: u2
-  - id: nscount
-    doc: "Number of resource records pointing toward an authority"
-    if: flags.is_opcode_valid
-    type: u2
-  - id: arcount
-    doc: "Number of resource records holding additional information"
-    if: flags.is_opcode_valid
-    type: u2
-  - id: queries
-    if: flags.is_opcode_valid
-    type: query
-    repeat: expr
-    repeat-expr: qdcount
-  - id: answers
-    if: flags.is_opcode_valid
-    type: answer
-    repeat: expr
-    repeat-expr: ancount
-  - id: authorities
-    if: flags.is_opcode_valid
-    type: answer
-    repeat: expr
-    repeat-expr: nscount
-  - id: additionals
-    if: flags.is_opcode_valid
-    type: answer
-    repeat: expr
-    repeat-expr: arcount
+    type: message_body
 types:
+  message_body:
+    seq:
+      - id: qdcount
+        doc: "How many questions are there"
+        type: u2
+      - id: ancount
+        doc: "Number of resource records answering the question"
+        type: u2
+      - id: nscount
+        doc: "Number of resource records pointing toward an authority"
+        type: u2
+      - id: arcount
+        doc: "Number of resource records holding additional information"
+        type: u2
+      - id: queries
+        if: qdcount > 0
+        type: query
+        repeat: expr
+        repeat-expr: qdcount
+      - id: answers
+        if: ancount > 0
+        type: answer
+        repeat: expr
+        repeat-expr: ancount
+      - id: authorities
+        if: nscount > 0
+        type: answer
+        repeat: expr
+        repeat-expr: nscount
+      - id: additionals
+        if: arcount > 0
+        type: answer
+        repeat: expr
+        repeat-expr: arcount
   query:
     seq:
       - id: name

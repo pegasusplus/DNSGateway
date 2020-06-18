@@ -46,12 +46,12 @@ namespace Kaitai.Tests
 
             Assert.IsTrue(dnsPacket.TransactionId == 0xf478);
             Assert.IsTrue(0x0100 == dnsPacket.Flags.Flag);
-            Assert.IsTrue(1 == dnsPacket.Qdcount);
-            Assert.IsTrue(0 == dnsPacket.Arcount);
-            Assert.IsTrue(0 == dnsPacket.Ancount);
-            Assert.IsTrue(0 == dnsPacket.Nscount);
-            Assert.IsTrue(1 == dnsPacket.Queries.Count);
-            DnsPacket.Query q = dnsPacket.Queries[0];
+            Assert.IsTrue(1 == dnsPacket.Body.Qdcount);
+            Assert.IsTrue(0 == dnsPacket.Body.Arcount);
+            Assert.IsTrue(0 == dnsPacket.Body.Ancount);
+            Assert.IsTrue(0 == dnsPacket.Body.Nscount);
+            Assert.IsTrue(1 == dnsPacket.Body.Queries.Count);
+            DnsPacket.Query q = dnsPacket.Body.Queries[0];
             Assert.IsTrue(DnsPacket.TypeType.A == q.Type);
             Assert.IsTrue(DnsPacket.ClassType.InClass == q.QueryClass);
             VerifyName(q.Name.Name, StrQueryDomainName);
@@ -127,10 +127,10 @@ namespace Kaitai.Tests
             {
                 DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(byteData));
 
-                DnsPacket.Query q = dnsPacket.Queries[0];
+                DnsPacket.Query q = dnsPacket.Body.Queries[0];
                 VerifyName(q.Name.Name, StrQueryDomainName);
 
-                DnsPacket.Answer a = dnsPacket.Answers[0];
+                DnsPacket.Answer a = dnsPacket.Body.Answers[0];
                 Assert.IsTrue(DnsPacket.ClassType.InClass == a.AnswerClass);
                 Assert.IsTrue(600 == a.Ttl);
                 Assert.IsTrue(DnsPacket.TypeType.A == a.Type);
@@ -179,10 +179,10 @@ namespace Kaitai.Tests
             {
                 DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(byteData));
 
-                DnsPacket.Query q = dnsPacket.Queries[0];
+                DnsPacket.Query q = dnsPacket.Body.Queries[0];
                 VerifyName(q.Name.Name, StrQueryDomainName);
 
-                DnsPacket.Answer a = dnsPacket.Answers[0];
+                DnsPacket.Answer a = dnsPacket.Body.Answers[0];
                 Assert.IsTrue(DnsPacket.ClassType.InClass == a.AnswerClass);
                 Assert.IsTrue(600 == a.Ttl);
                 Assert.IsTrue(DnsPacket.TypeType.A == a.Type);
@@ -197,11 +197,16 @@ namespace Kaitai.Tests
                     PointerStruct ps = l.Pointer;
                     try
                     {
-                        VerifyName(ps.Contents.Name, StrQueryDomainName);
+                        //VerifyName(ps.Contents.Name, StrQueryDomainName);
+                        Assert.AreEqual(1, ps.Contents.Name.Count);
+                        Label l2 = ps.Contents.Name[0];
+                        Assert.AreEqual(true, l2.IsPointer);
+                        Assert.AreEqual(0xC0, l2.Length);
+                        Assert.AreEqual((byte)36, l2.Pointer.Value);
                     }
-                    catch (System.IO.EndOfStreamException)
+                    catch (Exception)
                     {
-                        Assert.IsTrue(true);
+                        Assert.Fail();
                     }
                 }
             }
@@ -217,18 +222,18 @@ namespace Kaitai.Tests
         {
             Assert.IsTrue(dnsPacket.TransactionId == 0xf478);
             Assert.IsTrue(0x8180 == dnsPacket.Flags.Flag);
-            Assert.IsTrue(1 == dnsPacket.Qdcount);
-            Assert.IsTrue(0 == dnsPacket.Arcount);
-            Assert.IsTrue(1 == dnsPacket.Ancount);
-            Assert.IsTrue(0 == dnsPacket.Nscount);
-            Assert.IsTrue(1 == dnsPacket.Queries.Count);
-            Assert.IsTrue(1 == dnsPacket.Answers.Count);
-            DnsPacket.Query q = dnsPacket.Queries[0];
+            Assert.IsTrue(1 == dnsPacket.Body.Qdcount);
+            Assert.IsTrue(0 == dnsPacket.Body.Arcount);
+            Assert.IsTrue(1 == dnsPacket.Body.Ancount);
+            Assert.IsTrue(0 == dnsPacket.Body.Nscount);
+            Assert.IsTrue(1 == dnsPacket.Body.Queries.Count);
+            Assert.IsTrue(1 == dnsPacket.Body.Answers.Count);
+            DnsPacket.Query q = dnsPacket.Body.Queries[0];
             Assert.IsTrue(DnsPacket.TypeType.A == q.Type);
             Assert.IsTrue(DnsPacket.ClassType.InClass == q.QueryClass);
             VerifyName(q.Name.Name, StrQueryDomainName);
 
-            DnsPacket.Answer a = dnsPacket.Answers[0];
+            DnsPacket.Answer a = dnsPacket.Body.Answers[0];
             Assert.IsTrue(DnsPacket.ClassType.InClass == a.AnswerClass);
             Assert.IsTrue(ttl == a.Ttl);
             Assert.IsTrue(DnsPacket.TypeType.A == a.Type);
