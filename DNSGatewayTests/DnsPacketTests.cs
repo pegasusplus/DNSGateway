@@ -250,7 +250,7 @@ namespace Kaitai.Tests
 
             IPAddress ip = IPAddress.Parse(strAddressExpected);
             byte[] ipBytes = ip.GetAddressBytes();
-            Assert.IsTrue(ipBytes.Length == aa.Ip.Count);
+            Assert.IsTrue(ipBytes.Length == aa.Ip.Length);
             for(byte n = 0; n<ipBytes.Length; n++)
             {
                 Assert.IsTrue(ipBytes[n] == aa.Ip[n], "Address not expected as " + strAddressExpected);

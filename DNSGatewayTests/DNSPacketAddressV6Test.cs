@@ -118,7 +118,7 @@ namespace Kaitai.Tests
 
             IPAddress ip = IPAddress.Parse(strAddressExpected);
             byte[] ipBytes = ip.GetAddressBytes();
-            Assert.IsTrue(ipBytes.Length == aa.IpV6.Count);
+            Assert.IsTrue(ipBytes.Length == aa.IpV6.Length);
             for (byte n = 0; n < ipBytes.Length; n++)
             {
                 Assert.IsTrue(ipBytes[n] == aa.IpV6[n], "Address not expected as " + strAddressExpected);

@@ -320,16 +320,14 @@ namespace Kaitai
             {
                 _name = new List<Label>();
                 {
-                    //var i = 0;
                     Label M_;
                     do {
                         M_ = new Label(m_io, this, m_root);
-                        if (M_.Length == 0)
+                        if (0 == M_.Length)
                         {
                             break;
                         }
                         _name.Add(M_);
-                        //i++;
                     } while (!( ((M_.Length >= 192)) ));
                 }
             }
@@ -359,16 +357,12 @@ namespace Kaitai
             }
             private void _read()
             {
-                _ipV6 = new List<byte>((int) (16));
-                for (var i = 0; i < 16; i++)
-                {
-                    _ipV6.Add(m_io.ReadU1());
-                }
+                _ipV6 = m_io.ReadBytes(16);
             }
-            private List<byte> _ipV6;
+            private byte[] _ipV6;
             private DnsPacket m_root;
             private DnsPacket.Answer m_parent;
-            public List<byte> IpV6 { get { return _ipV6; } }
+            public byte[] IpV6 { get { return _ipV6; } }
             public DnsPacket M_Root { get { return m_root; } }
             public DnsPacket.Answer M_Parent { get { return m_parent; } }
         }
@@ -447,16 +441,12 @@ namespace Kaitai
             }
             private void _read()
             {
-                _ip = new List<byte>((int) (4));
-                for (var i = 0; i < 4; i++)
-                {
-                    _ip.Add(m_io.ReadU1());
-                }
+                _ip = m_io.ReadBytes(4);
             }
-            private List<byte> _ip;
+            private byte[] _ip;
             private DnsPacket m_root;
             private DnsPacket.Answer m_parent;
-            public List<byte> Ip { get { return _ip; } }
+            public byte[] Ip { get { return _ip; } }
             public DnsPacket M_Root { get { return m_root; } }
             public DnsPacket.Answer M_Parent { get { return m_parent; } }
         }
