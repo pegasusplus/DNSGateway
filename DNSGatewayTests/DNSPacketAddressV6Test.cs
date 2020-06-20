@@ -98,23 +98,16 @@ namespace Kaitai.Tests
             Assert.AreEqual(DnsPacket.TypeType.Soa, ns.Type);
             Assert.AreEqual(53, ns.Rdlength);
             Assert.AreEqual(ns.Payload.GetType(), typeof(DnsPacket.AuthorityInfo));
-            //VerifyRefName(a.Name.Name);
-            {
-                List<DnsPacket.Label> name = ns.Name.Name;
-                Assert.AreEqual((int)1, name.Count);
-                Label l = name[0];
-                Assert.IsTrue(l.IsPointer);
-                Assert.AreEqual(0xC0, l.Length);
-                Assert.AreEqual(0x10, l.Pointer.Value);
+            Assert.AreEqual(ns.Name.GetFullName(), "github.com");
 
-                PointerStruct ps = l.Pointer;
-                VerifyName(ps.Contents.Name, "github.com");
-            }
             DnsPacket.AuthorityInfo nsInfo = (DnsPacket.AuthorityInfo)ns.Payload;
             Assert.AreEqual(nsInfo.ExpireLimit, (uint)604800);
             Assert.AreEqual(nsInfo.MinTtl, (uint)60);
-            Assert.AreEqual("Continue verify ns info", "");
-            VerifyPayloadAddressV6(a, StrAddressExpected);
+            Assert.AreEqual(nsInfo.Serial, (uint)1592319081);
+            Assert.AreEqual(nsInfo.RetryInterval, (uint)600);
+            Assert.AreEqual(nsInfo.RefreshInterval, (uint)3600);
+            VerifyName(nsInfo.PrimaryNs.Name, "ns1.p16.dynect.net");
+            Assert.AreEqual(nsInfo.ResoponsibleMailbox.GetFullName(), "hostmaster.github.com");
         }
 
         private static void VerifyPayloadAddressV6(Answer a, string strAddressExpected)

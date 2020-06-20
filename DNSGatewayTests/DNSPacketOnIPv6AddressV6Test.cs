@@ -11,7 +11,7 @@ namespace Kaitai.Tests
     [TestClass()]
     public class DNSPacketOnIPv6AddressV6Test
     {
-        private const string StrQueryDomainName = "www.facebook.com";
+        private const string StrQueryDomainName = "live.github.com";
         UdpPacket[] udpPackets;
 
         [TestInitialize]
@@ -39,19 +39,19 @@ namespace Kaitai.Tests
         [TestMethod()]
         public void ParseRequest()
         {
-            DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[0].PayloadData));
+            DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[1].PayloadData));
 
-            Assert.IsTrue(dnsPacket.TransactionId == 0x0005);
-            Assert.IsTrue(0x0100 == dnsPacket.Flags.Flag);
-            Assert.IsTrue(1 == dnsPacket.Body.Qdcount);
+            Assert.AreEqual(dnsPacket.TransactionId, (ushort)0x1622);
+            Assert.AreEqual((ushort)0x0100, dnsPacket.Flags.Flag);
+            Assert.AreEqual((ushort)1, dnsPacket.Body.Qdcount);
             Assert.IsTrue(0 == dnsPacket.Body.Arcount);
             Assert.IsTrue(0 == dnsPacket.Body.Ancount);
             Assert.IsTrue(0 == dnsPacket.Body.Nscount);
-            Assert.IsTrue(1 == dnsPacket.Body.Queries.Count);
+            Assert.AreEqual((ushort)1, dnsPacket.Body.Queries.Count);
             DnsPacket.Query q = dnsPacket.Body.Queries[0];
-            Assert.IsTrue(DnsPacket.TypeType.Aaaa == q.Type);
-            Assert.IsTrue(DnsPacket.ClassType.InClass == q.QueryClass);
-            VerifyName(q.Name.Name, StrQueryDomainName);
+            Assert.AreEqual(DnsPacket.TypeType.Aaaa, q.Type);
+            Assert.AreEqual(DnsPacket.ClassType.InClass, q.QueryClass);
+            Assert.AreEqual(q.Name.GetFullName(), StrQueryDomainName);
 
             return;
         }
@@ -59,7 +59,7 @@ namespace Kaitai.Tests
         [TestMethod()]
         public void ParseResponseFrom114()
         {
-            DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[1].PayloadData));
+            DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[3].PayloadData));
 
             const string StrAddressExpected = "2001::1f0d:4c10";
             const int N_TTL_Expected = 89;
@@ -71,26 +71,26 @@ namespace Kaitai.Tests
 
         private static void VerifyAnswer(DnsPacket dnsPacket, string StrAddressExpected, int ttl)
         {
-            Assert.IsTrue(dnsPacket.TransactionId == 0x0005);
-            Assert.IsTrue(0x8180 == dnsPacket.Flags.Flag);
+            Assert.AreEqual(dnsPacket.TransactionId, (ushort)0x1622);
+            Assert.AreEqual((ushort)0x8180, dnsPacket.Flags.Flag);
             Assert.IsTrue(1 == dnsPacket.Body.Qdcount);
-            Assert.IsTrue(1 == dnsPacket.Body.Ancount);
+            Assert.IsTrue(0 == dnsPacket.Body.Ancount);
             Assert.IsTrue(0 == dnsPacket.Body.Arcount);
             Assert.IsTrue(0 == dnsPacket.Body.Nscount);
             Assert.IsTrue(1 == dnsPacket.Body.Queries.Count);
-            Assert.IsTrue(1 == dnsPacket.Body.Answers.Count);
+            Assert.IsTrue(null == dnsPacket.Body.Answers);
             DnsPacket.Query q = dnsPacket.Body.Queries[0];
-            Assert.IsTrue(DnsPacket.TypeType.Aaaa == q.Type);
-            Assert.IsTrue(DnsPacket.ClassType.InClass == q.QueryClass);
-            VerifyName(q.Name.Name, StrQueryDomainName);
+            Assert.AreEqual(DnsPacket.TypeType.Aaaa, q.Type);
+            Assert.AreEqual(DnsPacket.ClassType.InClass, q.QueryClass);
+            Assert.AreEqual(q.Name.GetFullName(), StrQueryDomainName);
 
-            DnsPacket.Answer a = dnsPacket.Body.Answers[0];
-            Assert.IsTrue(DnsPacket.ClassType.InClass == a.AnswerClass);
-            Assert.IsTrue(ttl == a.Ttl);
-            Assert.IsTrue(DnsPacket.TypeType.Aaaa == a.Type);
-            VerifyRefName(a.Name.Name);
+            //DnsPacket.Answer a = dnsPacket.Body.Answers[0];
+            //Assert.IsTrue(DnsPacket.ClassType.InClass == a.AnswerClass);
+            //Assert.IsTrue(ttl == a.Ttl);
+            //Assert.IsTrue(DnsPacket.TypeType.Aaaa == a.Type);
+            //Assert.AreEqual(a.Name.GetFullName(), StrQueryDomainName);
 
-            VerifyPayloadAddressV6(a, StrAddressExpected);
+            //VerifyPayloadAddressV6(a, StrAddressExpected);
         }
 
         private static void VerifyPayloadAddressV6(Answer a, string strAddressExpected)

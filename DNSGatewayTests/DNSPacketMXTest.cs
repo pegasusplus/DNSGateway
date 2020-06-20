@@ -39,9 +39,9 @@ namespace Kaitai.Tests
         [TestMethod()]
         public void ParseRequest()
         {
-            DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[0].PayloadData));
+            DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[8].PayloadData));
 
-            Assert.IsTrue(dnsPacket.TransactionId == 0x0005);
+            Assert.IsTrue(dnsPacket.TransactionId == 0x000a);
             Assert.IsTrue(0x0100 == dnsPacket.Flags.Flag);
             Assert.IsTrue(1 == dnsPacket.Body.Qdcount);
             Assert.IsTrue(0 == dnsPacket.Body.Arcount);
@@ -49,7 +49,7 @@ namespace Kaitai.Tests
             Assert.IsTrue(0 == dnsPacket.Body.Nscount);
             Assert.IsTrue(1 == dnsPacket.Body.Queries.Count);
             DnsPacket.Query q = dnsPacket.Body.Queries[0];
-            Assert.IsTrue(DnsPacket.TypeType.Aaaa == q.Type);
+            Assert.IsTrue(DnsPacket.TypeType.Mx == q.Type);
             Assert.IsTrue(DnsPacket.ClassType.InClass == q.QueryClass);
             VerifyName(q.Name.Name, StrQueryDomainName);
 
@@ -59,10 +59,10 @@ namespace Kaitai.Tests
         [TestMethod()]
         public void ParseResponseFrom114()
         {
-            DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[1].PayloadData));
+            DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[9].PayloadData));
 
             const string StrAddressExpected = "2001::1f0d:4c10";
-            const int N_TTL_Expected = 89;
+            const int N_TTL_Expected = 34;
 
             VerifyAnswer(dnsPacket, StrAddressExpected, N_TTL_Expected);
 
@@ -71,7 +71,7 @@ namespace Kaitai.Tests
 
         private static void VerifyAnswer(DnsPacket dnsPacket, string StrAddressExpected, int ttl)
         {
-            Assert.IsTrue(dnsPacket.TransactionId == 0x0005);
+            Assert.IsTrue(dnsPacket.TransactionId == 0x000a);
             Assert.IsTrue(0x8180 == dnsPacket.Flags.Flag);
             Assert.IsTrue(1 == dnsPacket.Body.Qdcount);
             Assert.IsTrue(1 == dnsPacket.Body.Ancount);
@@ -80,19 +80,19 @@ namespace Kaitai.Tests
             Assert.IsTrue(1 == dnsPacket.Body.Queries.Count);
             Assert.IsTrue(1 == dnsPacket.Body.Answers.Count);
             DnsPacket.Query q = dnsPacket.Body.Queries[0];
-            Assert.IsTrue(DnsPacket.TypeType.Aaaa == q.Type);
+            Assert.IsTrue(DnsPacket.TypeType.Mx == q.Type);
             Assert.IsTrue(DnsPacket.ClassType.InClass == q.QueryClass);
-            VerifyName(q.Name.Name, StrQueryDomainName);
+            Assert.AreEqual(q.Name.GetFullName(), StrQueryDomainName);
 
             DnsPacket.Answer a = dnsPacket.Body.Answers[0];
             Assert.IsTrue(DnsPacket.ClassType.InClass == a.AnswerClass);
             Assert.IsTrue(ttl == a.Ttl);
-            Assert.IsTrue(DnsPacket.TypeType.Aaaa == a.Type);
-            VerifyRefName(a.Name.Name);
-
-            VerifyPayloadAddressV6(a, StrAddressExpected);
-
-            Assert.Fail("To do: verify authorities");
+            Assert.IsTrue(DnsPacket.TypeType.Mx == a.Type);
+            Assert.AreEqual(a.Name.GetFullName(), StrQueryDomainName);
+            Assert.IsTrue(a.Payload is MxInfo);
+            MxInfo mi = (MxInfo)a.Payload;
+            Assert.AreEqual(mi.Mx.GetFullName(), "smtpin.vvv.facebook.com");
+            Assert.AreEqual(mi.Preference, 10);
         }
 
         private static void VerifyPayloadAddressV6(Answer a, string strAddressExpected)
