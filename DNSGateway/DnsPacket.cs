@@ -328,7 +328,7 @@ namespace Kaitai
                             break;
                         }
                         _name.Add(M_);
-                    } while (!( ((M_.Length >= 192)) ));
+                    } while (!(((M_.Length >= 192))));
                 }
             }
             private List<Label> _name;
@@ -569,61 +569,21 @@ namespace Kaitai
             {
                 m_parent = p__parent;
                 m_root = p__root;
-                f_qr = false;
-                f_ra = false;
-                f_tc = false;
                 f_isOpcodeValid = false;
-                f_rcode = false;
-                f_opcode = false;
-                f_aa = false;
-                f_z = false;
-                f_rd = false;
-                f_cd = false;
-                f_ad = false;
                 _read();
             }
             private void _read()
             {
-                _flag = m_io.ReadU2be();
-            }
-            private bool f_qr;
-            private int _qr;
-            public int Qr
-            {
-                get
-                {
-                    if (f_qr)
-                        return _qr;
-                    _qr = (int) (((Flag & 32768) >> 15));
-                    f_qr = true;
-                    return _qr;
-                }
-            }
-            private bool f_ra;
-            private int _ra;
-            public int Ra
-            {
-                get
-                {
-                    if (f_ra)
-                        return _ra;
-                    _ra = (int) (((Flag & 128) >> 7));
-                    f_ra = true;
-                    return _ra;
-                }
-            }
-            private bool f_tc;
-            private int _tc;
-            public int Tc
-            {
-                get
-                {
-                    if (f_tc)
-                        return _tc;
-                    _tc = (int) (((Flag & 512) >> 9));
-                    f_tc = true;
-                    return _tc;
-                }
+                _qr = m_io.ReadBitsIntBe(1) != 0;
+                _opcode = m_io.ReadBitsIntBe(4);
+                _aa = m_io.ReadBitsIntBe(1) != 0;
+                _tc = m_io.ReadBitsIntBe(1) != 0;
+                _rd = m_io.ReadBitsIntBe(1) != 0;
+                _ra = m_io.ReadBitsIntBe(1) != 0;
+                _z = m_io.ReadBitsIntBe(1) != 0;
+                _ad = m_io.ReadBitsIntBe(1) != 0;
+                _cd = m_io.ReadBitsIntBe(1) != 0;
+                _rcode = m_io.ReadBitsIntBe(4);
             }
             private bool f_isOpcodeValid;
             private bool _isOpcodeValid;
@@ -638,101 +598,28 @@ namespace Kaitai
                     return _isOpcodeValid;
                 }
             }
-            private bool f_rcode;
-            private int _rcode;
-            public int Rcode
-            {
-                get
-                {
-                    if (f_rcode)
-                        return _rcode;
-                    _rcode = (int) (((Flag & 15) >> 0));
-                    f_rcode = true;
-                    return _rcode;
-                }
-            }
-            private bool f_opcode;
-            private int _opcode;
-            public int Opcode
-            {
-                get
-                {
-                    if (f_opcode)
-                        return _opcode;
-                    _opcode = (int) (((Flag & 30720) >> 11));
-                    f_opcode = true;
-                    return _opcode;
-                }
-            }
-            private bool f_aa;
-            private int _aa;
-            public int Aa
-            {
-                get
-                {
-                    if (f_aa)
-                        return _aa;
-                    _aa = (int) (((Flag & 1024) >> 10));
-                    f_aa = true;
-                    return _aa;
-                }
-            }
-            private bool f_z;
-            private int _z;
-            public int Z
-            {
-                get
-                {
-                    if (f_z)
-                        return _z;
-                    _z = (int) (((Flag & 64) >> 6));
-                    f_z = true;
-                    return _z;
-                }
-            }
-            private bool f_rd;
-            private int _rd;
-            public int Rd
-            {
-                get
-                {
-                    if (f_rd)
-                        return _rd;
-                    _rd = (int) (((Flag & 256) >> 8));
-                    f_rd = true;
-                    return _rd;
-                }
-            }
-            private bool f_cd;
-            private int _cd;
-            public int Cd
-            {
-                get
-                {
-                    if (f_cd)
-                        return _cd;
-                    _cd = (int) (((Flag & 16) >> 4));
-                    f_cd = true;
-                    return _cd;
-                }
-            }
-            private bool f_ad;
-            private int _ad;
-            public int Ad
-            {
-                get
-                {
-                    if (f_ad)
-                        return _ad;
-                    _ad = (int) (((Flag & 32) >> 5));
-                    f_ad = true;
-                    return _ad;
-                }
-            }
-            private ushort _flag;
+            private bool _qr;
+            private ulong _opcode;
+            private bool _aa;
+            private bool _tc;
+            private bool _rd;
+            private bool _ra;
+            private bool _z;
+            private bool _ad;
+            private bool _cd;
+            private ulong _rcode;
             private DnsPacket m_root;
             private DnsPacket m_parent;
-            public ushort Flag { get { return _flag; } }
+            public bool Qr { get { return _qr; } }
+            public ulong Opcode { get { return _opcode; } }
+            public bool Aa { get { return _aa; } }
+            public bool Tc { get { return _tc; } }
+            public bool Rd { get { return _rd; } }
+            public bool Ra { get { return _ra; } }
+            public bool Z { get { return _z; } }
+            public bool Ad { get { return _ad; } }
+            public bool Cd { get { return _cd; } }
+            public ulong Rcode { get { return _rcode; } }
             public DnsPacket M_Root { get { return m_root; } }
             public DnsPacket M_Parent { get { return m_parent; } }
         }

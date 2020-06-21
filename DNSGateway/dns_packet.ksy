@@ -135,29 +135,27 @@ types:
         size: 16
   packet_flags:
     seq:
-      - id: flag
-        type: u2
+      - id: qr
+        type: b1
+      - id: opcode
+        type: b4
+      - id: aa
+        type: b1
+      - id: tc
+        type: b1
+      - id: rd
+        type: b1
+      - id: ra
+        type: b1
+      - id: z
+        type: b1
+      - id: ad
+        type: b1
+      - id: cd
+        type: b1
+      - id: rcode
+        type: b4
     instances:
-      qr:
-        value: (flag & 0b1000_0000_0000_0000) >> 15
-      opcode:
-        value: (flag & 0b0111_1000_0000_0000) >> 11
-      aa:
-        value: (flag & 0b0000_0100_0000_0000) >> 10
-      tc:
-        value: (flag & 0b0000_0010_0000_0000) >> 9
-      rd:
-        value: (flag & 0b0000_0001_0000_0000) >> 8
-      ra:
-        value: (flag & 0b0000_0000_1000_0000) >> 7
-      z:
-        value: (flag & 0b0000_0000_0100_0000) >> 6
-      ad:
-        value: (flag & 0b0000_0000_0010_0000) >> 5
-      cd:
-        value: (flag & 0b0000_0000_0001_0000) >> 4
-      rcode:
-        value: (flag & 0b0000_0000_0000_1111) >> 0
       is_opcode_valid:
         value: opcode == 0 or opcode == 1 or opcode == 2
   service:

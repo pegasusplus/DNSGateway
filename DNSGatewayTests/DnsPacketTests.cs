@@ -45,7 +45,9 @@ namespace Kaitai.Tests
             DnsPacket dnsPacket = new DnsPacket(new KaitaiStream(udpPackets[0].PayloadData));
 
             Assert.IsTrue(dnsPacket.TransactionId == 0xf478);
-            Assert.IsTrue(0x0100 == dnsPacket.Flags.Flag);
+            //Assert.IsTrue(0x0100 == dnsPacket.Flags.Flag);
+            Assert.IsTrue(dnsPacket.Flags.IsOpcodeValid);
+            Assert.IsTrue(dnsPacket.Flags.Rd);
             Assert.IsTrue(1 == dnsPacket.Body.Qdcount);
             Assert.IsTrue(0 == dnsPacket.Body.Arcount);
             Assert.IsTrue(0 == dnsPacket.Body.Ancount);
@@ -221,7 +223,11 @@ namespace Kaitai.Tests
         private static void VerifyAnswer(DnsPacket dnsPacket, string StrAddressExpected, int ttl)
         {
             Assert.IsTrue(dnsPacket.TransactionId == 0xf478);
-            Assert.IsTrue(0x8180 == dnsPacket.Flags.Flag);
+            //Assert.IsTrue(0x8180 == dnsPacket.Flags.Flag);
+            Assert.IsTrue(dnsPacket.Flags.IsOpcodeValid);
+            Assert.IsTrue(dnsPacket.Flags.Rd);
+            Assert.IsTrue(dnsPacket.Flags.Qr);
+            Assert.IsTrue(dnsPacket.Flags.Ra);
             Assert.IsTrue(1 == dnsPacket.Body.Qdcount);
             Assert.IsTrue(0 == dnsPacket.Body.Arcount);
             Assert.IsTrue(1 == dnsPacket.Body.Ancount);
