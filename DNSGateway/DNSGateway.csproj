@@ -6,7 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DnsPacket.cs.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\KaitaiStruct\runtime\csharp\kaitai_struct_runtime_csharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="dns_packet.ksy">
+      <Generator>.\GenerateParserCode.bat</Generator>
+    </None>
+    <None Update="GenerateParserCode.bat">
+      <Generator></Generator>
+    </None>
   </ItemGroup>
 
 </Project>

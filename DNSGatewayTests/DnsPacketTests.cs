@@ -210,6 +210,17 @@ namespace Kaitai.Tests
                     {
                         Assert.Fail();
                     }
+
+                    // Try to get full name will cause exception
+                    try
+                    {
+                        Assert.AreEqual(a.Name.GetFullName(), "");
+                        Assert.Fail("Exception expected");
+                    }
+                    catch(ArgumentOutOfRangeException e)
+                    {
+                        Console.WriteLine("Exception expected in detecting ref loop: {0}", e.Message);
+                    }
                 }
             }
             //catch (System.IO.EndOfStreamException)
