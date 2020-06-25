@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\PHD_DC">
+      <UniqueIdentifier>{5412b25e-0453-4c88-8279-c43d7c175270}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -21,12 +24,27 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\filter\kernel\phd_core_da.h">
+      <Filter>Source Files\PHD_DC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\filter\kernel\phd_core_dc.h">
+      <Filter>Source Files\PHD_DC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\filter\kernel\phd_core_dns.h">
+      <Filter>Source Files\PHD_DC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\filter\kernel\phd_core_dnsfwd.h">
+      <Filter>Source Files\PHD_DC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\SmartProject\PacketDotNet\PacketDotNet\PacketDotNet.csproj" />
     <ProjectReference Include="..\..\SmartProject\SharpPcap\SharpPcap.csproj" />
     <ProjectReference Include="..\DNSGateway\DNSGateway.csproj" />
+    <ProjectReference Include="..\Kernel.CLR\Kernel.CLR.vcxproj" />
   </ItemGroup>
 
   <Import Project="..\..\SmartProject\SharpPcapHelper\SharpPcapHelper.projitems" Label="Shared" />
